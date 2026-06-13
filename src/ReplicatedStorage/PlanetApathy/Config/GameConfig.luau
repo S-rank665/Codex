@@ -17,6 +17,7 @@ GameConfig.Controls = {
 	Ragdoll = Enum.KeyCode.X,
 	Push = Enum.KeyCode.F,
 	Crouch = Enum.KeyCode.LeftControl,
+	AdminMenu = Enum.KeyCode.F4,
 }
 GameConfig.Blood = {
 	NpcColor = Color3.fromRGB(255, 221, 44),
@@ -76,4 +77,13 @@ GameConfig.Layers = {
 }
 GameConfig.FirstRunGoalLayer = 11
 GameConfig.AdminUserIds = {}
+GameConfig.AdminGroup = {
+	UseExperienceGroup = true,
+	MinRank = 200,
+}
+GameConfig.Debug = {
+	Enabled = true,
+	SpawnHeight = 8,
+	DefaultStructureName = "Untitled Test Structure",
+}
 return GameConfig
