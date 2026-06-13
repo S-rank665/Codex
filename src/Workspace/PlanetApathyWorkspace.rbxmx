@@ -390,7 +390,7 @@
   <Item class="SpawnLocation" referent="ExperimentSpawn">
     <Properties>
       <string name="Name">ExperimentSpawn</string>
-      <Vector3 name="Size"><X>8</X><Y>1</Y><Z>8</Z></Vector3>
+      <Vector3 name="Size"><X>6</X><Y>1</Y><Z>6</Z></Vector3>
       <Vector3 name="Position"><X>0</X><Y>20</Y><Z>48</Z></Vector3>
       <Color3 name="Color"><R>0.3137254901960784</R><G>0.47058823529411764</G><B>0.5882352941176471</B></Color3>
       <bool name="Anchored">true</bool>

@@ -18,16 +18,20 @@ Roblox Studio / Luau parody survival-exploration prototype with original lore an
 - Mood/apathy system with walk-speed penalty, 30% action refusal under low mood, and periodic dialogue.
 - Health state model with global stats and per-body-part values for muscle, infection, pain, skin, and bleeding.
 - Six-slot body inventory, no filled-container nesting, recognition names for low INT, equipment slots, and item expiry hooks.
-- Configurable 11-layer block cave generator using editable voxel templates plus noise/erosion tuning fields.
-- Test HUD for health, inventory, crafting, dialogue bubbles, shader placeholders, and admin debugging.
+- Configurable 11-layer block cave generator using editable 2-stud voxel templates plus noise/erosion tuning fields.
+- Test HUD for health, inventory, crafting, settings, dialogue bubbles, shader placeholders, and admin debugging.
 - Server bootstrap for run state, generated first layer, remotes, health ticking, state replication, and admin commands.
 
 ## Controls
 
-- `TAB` inventory.
-- `R` health panel.
-- `C` crafting panel.
+- `TAB` inventory. Press again to close.
+- `R` health panel. Press again to close.
+- `C` crafting panel. Press again to close.
+- `P` settings panel. Press again to close.
 - `F4` admin debug panel, only when admin access is granted.
+- Right mouse button picks up item Parts with an `ItemId` attribute.
+- Left mouse button uses/attacks with the main hand through the apathy action gate.
+- Middle mouse button locks camera rotation while held.
 
 ## Admin debug access
 

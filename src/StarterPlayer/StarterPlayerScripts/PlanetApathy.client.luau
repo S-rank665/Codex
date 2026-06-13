@@ -4,15 +4,19 @@ local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local ContextActionService = game:GetService("ContextActionService")
 
 local player = Players.LocalPlayer
 local Root = ReplicatedStorage:WaitForChild("PlanetApathy")
 local Config = require(Root.Config.GameConfig)
 local ChatService = require(Root.Shared.ChatService)
 local BloodService = require(Root.Shared.BloodService)
+local AnimationService = require(Root.Shared.AnimationService)
 local remotes = Root:WaitForChild("Remotes")
 local stateRemote = remotes:WaitForChild("StateUpdate") :: RemoteEvent
 local adminRemote = remotes:WaitForChild("AdminCommand") :: RemoteFunction
+local pickupRemote = remotes:WaitForChild("PickupItem") :: RemoteFunction
+local actionRemote = remotes:WaitForChild("AttemptApatheticAction") :: RemoteFunction
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
 player.CameraMode = Config.Camera.Mode
@@ -22,6 +26,9 @@ player.CameraMaxZoomDistance = Config.Camera.MaxZoomDistance
 local gui = player:WaitForChild("PlayerGui"):WaitForChild("PlanetApathyGui")
 local openMenu: string? = nil
 local latestState = nil
+local activeMovementTrack: AnimationTrack? = nil
+local activeMovementName: string? = nil
+local ragdollEnabled = false
 
 local function panel(name: string): GuiObject?
 	local found = gui:FindFirstChild(name)
@@ -42,7 +49,12 @@ local function setOnlyPanel(name: string?)
 end
 
 local function toggleMenu(name: string)
-	setOnlyPanel(openMenu == name and nil or name)
+	local existing = panel(name)
+	if existing and existing.Visible then
+		setOnlyPanel(nil)
+	else
+		setOnlyPanel(name)
+	end
 end
 
 local function updateText(pathName: string, value: string)
@@ -58,6 +70,19 @@ local function invokeAdmin(command: string, payload: any?)
 	local ok, result = adminRemote:InvokeServer(command, payload)
 	updateAdminStatus((ok and "OK: " or "NO: ") .. tostring(result))
 end
+
+
+ContextActionService:BindActionAtPriority("PlanetApathyRightMousePickup", function(_, inputState)
+	if inputState == Enum.UserInputState.Begin then
+		local mouse = player:GetMouse()
+		local target = mouse.Target
+		if target and target:GetAttribute("ItemId") then
+			local ok, message = pickupRemote:InvokeServer(target)
+			updateAdminStatus((ok and "Pickup: " or "Pickup failed: ") .. tostring(message))
+		end
+	end
+	return Enum.ContextActionResult.Sink
+end, false, 3000, Enum.UserInputType.MouseButton2)
 
 local adminButtons = {
 	MoodPlus = {"Mood", 20},
@@ -109,6 +134,15 @@ local function updateHealthUi(state)
 		local text = string.format("%s  Muscle:%d Pain:%d Inf:%d Skin:%d", partState.Amputated and "MISSING" or partName, partState.Muscle, partState.Pain, partState.Infection, partState.Skin)
 		updateText(partName .. "Part", text)
 	end
+	if state.Inventory then
+		for _, slotName in ipairs(Config.InventorySlots) do
+			local button = gui:FindFirstChild(slotName, true)
+			local item = state.Inventory[slotName]
+			if button and button:IsA("TextButton") then
+				button.Text = slotName .. "\n" .. (item and item.Name or "(empty)")
+			end
+		end
+	end
 end
 
 UserInputService.InputBegan:Connect(function(input, processed)
@@ -116,7 +150,31 @@ UserInputService.InputBegan:Connect(function(input, processed)
 	if input.KeyCode == Config.Controls.Inventory then toggleMenu("InventoryPanel") end
 	if input.KeyCode == Config.Controls.HealthPanel then toggleMenu("HealthPanel") end
 	if input.KeyCode == Config.Controls.Crafting then toggleMenu("CraftingPanel") end
+	if input.KeyCode == Config.Controls.Settings then toggleMenu("SettingsPanel") end
+	if input.KeyCode == Config.Controls.Ragdoll then
+		ragdollEnabled = not ragdollEnabled
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+		if humanoid then
+			humanoid:ChangeState(ragdollEnabled and Enum.HumanoidStateType.Physics or Enum.HumanoidStateType.GettingUp)
+			activeMovementName = ragdollEnabled and "Ragdoll" or "Idle"
+			if activeMovementTrack then activeMovementTrack:Stop(0.12) end
+			activeMovementTrack = AnimationService.Play(humanoid, activeMovementName)
+		end
+	end
 	if input.KeyCode == Config.Controls.AdminMenu and player:GetAttribute("IsPlanetApathyAdmin") == true then toggleMenu("AdminPanel") end
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		actionRemote:InvokeServer("MainHandUse")
+	end
+	if input.UserInputType == Enum.UserInputType.MouseButton3 then
+		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton3 then
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	end
 end)
 
 stateRemote.OnClientEvent:Connect(function(state)
@@ -138,6 +196,26 @@ remotes.Dialogue.OnClientEvent:Connect(function(line: string)
 	if label and label:IsA("TextLabel") then label.Text = line end
 	updateText("LastDialogue", line)
 end)
+
+local function setupCharacterAnimations(character: Model)
+	local humanoid = character:WaitForChild("Humanoid", 5)
+	if humanoid and humanoid:IsA("Humanoid") then
+		local animate = character:FindFirstChild("Animate")
+		if animate then animate.Disabled = true end
+		AnimationService.Play(humanoid, "Idle")
+		humanoid.Running:Connect(function(speed)
+			if ragdollEnabled then return end
+			local wanted = speed > 0.5 and "Walk" or "Idle"
+			if activeMovementName == wanted then return end
+			activeMovementName = wanted
+			if activeMovementTrack then activeMovementTrack:Stop(0.12) end
+			activeMovementTrack = AnimationService.Play(humanoid, wanted)
+		end)
+	end
+end
+
+if player.Character then setupCharacterAnimations(player.Character) end
+player.CharacterAdded:Connect(setupCharacterAnimations)
 
 RunService.RenderStepped:Connect(function()
 	local character = player.Character

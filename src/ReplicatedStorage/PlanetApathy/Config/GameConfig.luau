@@ -18,6 +18,7 @@ GameConfig.Controls = {
 	Ragdoll = Enum.KeyCode.X,
 	Push = Enum.KeyCode.F,
 	Crouch = Enum.KeyCode.LeftControl,
+	Settings = Enum.KeyCode.P,
 	AdminMenu = Enum.KeyCode.F4,
 }
 GameConfig.Blood = {
@@ -84,6 +85,7 @@ GameConfig.AdminGroup = {
 }
 GameConfig.Debug = {
 	Enabled = true,
+	PickupDistance = 12,
 	SpawnHeight = 8,
 	DefaultStructureName = "Untitled Test Structure",
 }

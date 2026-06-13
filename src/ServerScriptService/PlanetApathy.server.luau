@@ -12,6 +12,7 @@ local MoodService = require(Root.Shared.MoodService)
 local BloodService = require(Root.Shared.BloodService)
 local WorldGenerationService = require(Root.Shared.WorldGenerationService)
 local DebugCatalog = require(Root.Shared.DebugCatalog)
+local InventoryService = require(Root.Shared.InventoryService)
 
 pcall(function() TextChatService.ChatWindowConfiguration.Enabled = false end)
 
@@ -28,8 +29,11 @@ local stateRemote = remotes:FindFirstChild("StateUpdate") or Instance.new("Remot
 stateRemote.Name = "StateUpdate"; stateRemote.Parent = remotes
 local adminRemote = remotes:FindFirstChild("AdminCommand") or Instance.new("RemoteFunction")
 adminRemote.Name = "AdminCommand"; adminRemote.Parent = remotes
+local pickupRemote = remotes:FindFirstChild("PickupItem") or Instance.new("RemoteFunction")
+pickupRemote.Name = "PickupItem"; pickupRemote.Parent = remotes
 
 local playerStates = {}
+local playerInventories = {}
 local currentLayer = 1
 local workspaceRoot = workspace:FindFirstChild("PlanetApathyWorkspace") or Instance.new("Folder")
 workspaceRoot.Name = "PlanetApathyWorkspace"
@@ -68,6 +72,7 @@ local function publicStateFor(player: Player)
 		Objective = state.Objective,
 		IsAdmin = isAdmin(player),
 		DebugCatalog = DebugCatalog,
+		Inventory = playerInventories[player],
 	}
 end
 
@@ -84,6 +89,7 @@ local function setupCharacter(player: Player, character: Model)
 	state.BloodColor = Config.Blood.DefaultPlayerColor
 	state.Objective = "Descend into the planet, recover the equipment, and prove the corporation had a terrible idea."
 	playerStates[player] = state
+	playerInventories[player] = InventoryService.NewInventory()
 	player:SetAttribute("ExperimentNumber", state.ExperimentNumber)
 	player:SetAttribute("BloodColor", state.BloodColor:ToHex())
 	player:SetAttribute("IsPlanetApathyAdmin", isAdmin(player))
@@ -106,6 +112,29 @@ bloodRemote.OnServerInvoke = function(player: Player, color: Color3)
 	player:SetAttribute("BloodColor", clean:ToHex())
 	pushState(player)
 	return ok, clean
+end
+
+pickupRemote.OnServerInvoke = function(player: Player, target: Instance?)
+	if not target or not target:IsA("BasePart") or not target:GetAttribute("ItemId") then return false, "No item" end
+	local character = player.Character
+	local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+	if not rootPart or not rootPart:IsA("BasePart") then return false, "No character root" end
+	if (rootPart.Position - target.Position).Magnitude > Config.Debug.PickupDistance then return false, "Too far" end
+	local inventory = playerInventories[player]
+	if not inventory then return false, "No inventory" end
+	for _, slot in ipairs(Config.InventorySlots) do
+		if inventory[slot] == nil then
+			inventory[slot] = {
+				Id = tostring(target:GetAttribute("ItemId")),
+				Name = target.Name,
+				Kind = tostring(target:GetAttribute("Kind") or "Item"),
+			}
+			target:Destroy()
+			pushState(player)
+			return true, "Picked up into " .. slot
+		end
+	end
+	return false, "Inventory full"
 end
 
 actionRemote.OnServerInvoke = function(player: Player, actionName: string)

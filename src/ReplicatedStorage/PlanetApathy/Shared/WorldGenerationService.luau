@@ -1,7 +1,7 @@
 --!strict
 local Config = require(script.Parent.Parent.Config.GameConfig)
 local WorldGenerationService = {}
-WorldGenerationService.BlockSize = 8
+WorldGenerationService.BlockSize = 2
 
 local function getVoxelTemplate(layer)
 	local root = workspace:FindFirstChild("PlanetApathyWorkspace")
@@ -47,13 +47,13 @@ function WorldGenerationService.BuildLayerModel(layerId: number, seed: number, p
 	end
 	local barrier = Instance.new("Part")
 	barrier.Name = "LayerTransitionBarrier"
-	barrier.Size = Vector3.new(60, 36, 3)
-	barrier.Position = Vector3.new(0, 0, -92)
+	barrier.Size = Vector3.new(20, 14, 1)
+	barrier.Position = Vector3.new(0, 0, -28)
 	barrier.Anchored = true
 	barrier.Color = Color3.fromRGB(0, 0, 0)
 	barrier.Material = Enum.Material.ForceField
 	barrier.CanCollide = false
-	barrier.Transparency = 0.78
+	barrier.Transparency = 1
 	barrier:SetAttribute("NextLayer", math.min(layerId + 1, #Config.Layers))
 	barrier.Parent = model
 	return model
