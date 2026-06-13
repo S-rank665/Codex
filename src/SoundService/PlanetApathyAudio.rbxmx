@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<roblox version="4">
+  <Item class="Folder" referent="PlanetApathyAudio">
+    <Properties>
+      <string name="Name">PlanetApathyAudio</string>
+    </Properties>
+    <Item class="Folder" referent="MusicLayers">
+      <Properties>
+        <string name="Name">MusicLayers</string>
+      </Properties>
+      <Item class="Sound" referent="HorrorLowMood">
+        <Properties>
+          <string name="Name">HorrorLowMood</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="NeutralExploration">
+        <Properties>
+          <string name="Name">NeutralExploration</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="GoodMood">
+        <Properties>
+          <string name="Name">GoodMood</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="DepthPulse">
+        <Properties>
+          <string name="Name">DepthPulse</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="BodySounds">
+      <Properties>
+        <string name="Name">BodySounds</string>
+      </Properties>
+      <Item class="Sound" referent="Fatigue">
+        <Properties>
+          <string name="Name">Fatigue</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="Sickness">
+        <Properties>
+          <string name="Name">Sickness</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="HealthPanelHeart">
+        <Properties>
+          <string name="Name">HealthPanelHeart</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="BloodFlow">
+        <Properties>
+          <string name="Name">BloodFlow</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="Fracture">
+        <Properties>
+          <string name="Name">Fracture</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+      <Item class="Sound" referent="Breathing">
+        <Properties>
+          <string name="Name">Breathing</string>
+          <string name="SoundId"/>
+        </Properties>
+      </Item>
+    </Item>
+  </Item>
+</roblox>

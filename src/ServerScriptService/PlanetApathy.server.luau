@@ -31,9 +31,12 @@ adminRemote.Name = "AdminCommand"; adminRemote.Parent = remotes
 
 local playerStates = {}
 local currentLayer = 1
-local worldFolder = Instance.new("Folder")
+local workspaceRoot = workspace:FindFirstChild("PlanetApathyWorkspace") or Instance.new("Folder")
+workspaceRoot.Name = "PlanetApathyWorkspace"
+workspaceRoot.Parent = workspace
+local worldFolder = workspaceRoot:FindFirstChild("GeneratedPlanetLayers") or Instance.new("Folder")
 worldFolder.Name = "GeneratedPlanetLayers"
-worldFolder.Parent = workspace
+worldFolder.Parent = workspaceRoot
 WorldGenerationService.BuildLayerModel(currentLayer, os.time() % 100000, worldFolder)
 
 local function isConfiguredAdmin(userId: number): boolean
@@ -125,11 +128,14 @@ local function spawnDebugItem(player: Player, itemId: string): (boolean, string)
 	for _, item in ipairs(DebugCatalog.SpawnableItems) do
 		if item.Id == itemId then selected = item end
 	end
-	local part = Instance.new("Part")
+	local itemTemplates = workspaceRoot:FindFirstChild("ItemTemplates")
+	local template = itemTemplates and itemTemplates:FindFirstChild(selected.TemplateName or "")
+	local part = template and template:Clone() or Instance.new("Part")
 	part.Name = selected.Name
 	part.Size = Vector3.new(2, 1, 2)
 	part.Position = rootPart.Position + Vector3.new(0, Config.Debug.SpawnHeight, 0)
 	part.Color = selected.Color
+	part.Anchored = false
 	part:SetAttribute("ItemId", selected.Id)
 	part:SetAttribute("Kind", selected.Kind)
 	part.Parent = workspace

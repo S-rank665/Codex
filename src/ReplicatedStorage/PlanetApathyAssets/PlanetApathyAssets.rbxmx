@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<roblox version="4">
+  <Item class="Folder" referent="PlanetApathyAssets">
+    <Properties>
+      <string name="Name">PlanetApathyAssets</string>
+    </Properties>
+    <Item class="Folder" referent="Animations">
+      <Properties>
+        <string name="Name">Animations</string>
+      </Properties>
+      <Item class="Folder" referent="RagdollLocomotion">
+        <Properties>
+          <string name="Name">RagdollLocomotion</string>
+        </Properties>
+        <Item class="Animation" referent="Idle">
+          <Properties>
+            <string name="Name">Idle</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Walk">
+          <Properties>
+            <string name="Name">Walk</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Crouch">
+          <Properties>
+            <string name="Name">Crouch</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Ragdoll">
+          <Properties>
+            <string name="Name">Ragdoll</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Push">
+          <Properties>
+            <string name="Name">Push</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="Folder" referent="RestStates">
+        <Properties>
+          <string name="Name">RestStates</string>
+        </Properties>
+        <Item class="Animation" referent="Sit">
+          <Properties>
+            <string name="Name">Sit</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Lying">
+          <Properties>
+            <string name="Name">Lying</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="Folder" referent="MedicalMinigames">
+        <Properties>
+          <string name="Name">MedicalMinigames</string>
+        </Properties>
+        <Item class="Animation" referent="BandageWrap">
+          <Properties>
+            <string name="Name">BandageWrap</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="SplinterExtract">
+          <Properties>
+            <string name="Name">SplinterExtract</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="BoneAlign">
+          <Properties>
+            <string name="Name">BoneAlign</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="Folder" referent="FaceStates">
+        <Properties>
+          <string name="Name">FaceStates</string>
+        </Properties>
+        <Item class="Animation" referent="Neutral">
+          <Properties>
+            <string name="Name">Neutral</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Pain">
+          <Properties>
+            <string name="Name">Pain</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Apathy">
+          <Properties>
+            <string name="Name">Apathy</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+        <Item class="Animation" referent="Relief">
+          <Properties>
+            <string name="Name">Relief</string>
+            <Content name="AnimationId">
+              <url/>
+            </Content>
+          </Properties>
+        </Item>
+      </Item>
+    </Item>
+  </Item>
+</roblox>

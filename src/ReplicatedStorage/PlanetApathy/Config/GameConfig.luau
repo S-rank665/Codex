@@ -12,6 +12,7 @@ GameConfig.Camera = {
 GameConfig.Controls = {
 	Inventory = Enum.KeyCode.Tab,
 	HealthPanel = Enum.KeyCode.R,
+	Crafting = Enum.KeyCode.C,
 	SwapHands = Enum.KeyCode.Q,
 	ThrowMainHand = Enum.KeyCode.T,
 	Ragdoll = Enum.KeyCode.X,
