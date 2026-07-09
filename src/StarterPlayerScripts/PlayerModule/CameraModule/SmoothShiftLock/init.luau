@@ -166,7 +166,7 @@ function SmoothShiftLock:ToggleShiftLock(Toggle: boolean)
 		if (self.isMouseLocked) and self.Character then
 			self._runtimeMaid:GiveTask(RunService.RenderStepped:Connect(function(Delta: number)
 				if not self.Humanoid or not self.HumanoidRootPart then return end
-				self.Humanoid.AutoRotate = not self.isMouseLocked
+				self.Humanoid.AutoRotate = not self.cameraFacingEnabled
 				if not self.cameraFacingEnabled then return end
 				--// Rotate character only when a character ability explicitly enables it.
 				if self.Humanoid.Sit then return end
@@ -176,7 +176,7 @@ function SmoothShiftLock:ToggleShiftLock(Toggle: boolean)
 	else
 		self._runtimeMaid:Destroy()
 		if self.Humanoid then
-			self.Humanoid.AutoRotate = not self.isMouseLocked
+			self.Humanoid.AutoRotate = true
 		end
 		
 		CameraUtils.restoreMouseIcon()
@@ -187,6 +187,10 @@ end
 
 function SmoothShiftLock:SetCameraFacingEnabled(Enabled: boolean)
 	self.cameraFacingEnabled = Enabled
+
+	if self.Humanoid then
+		self.Humanoid.AutoRotate = not Enabled
+	end
 end
 
 function SmoothShiftLock:GetCameraFacingEnabled(): boolean
