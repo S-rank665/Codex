@@ -129,8 +129,12 @@ function ServerCharacterManager._InitCharacter(player: Player, Char: Model, char
     local Humanoid = Char:FindFirstChildWhichIsA("Humanoid")
     Humanoid.MaxHealth = module.GameplayConfig.Health
     Humanoid.Health = module.GameplayConfig.Health
-    Humanoid.JumpPower = 0
-    Humanoid.JumpHeight = 0
+    Humanoid.UseJumpPower = if module.GameplayConfig.UseJumpPower ~= nil then module.GameplayConfig.UseJumpPower else true
+    Humanoid.JumpPower = module.GameplayConfig.JumpPower or 50
+    Humanoid.JumpHeight = module.GameplayConfig.JumpHeight or 7.2
+
+    Char:SetAttribute("SelectionTag", module.Config.SelectionTag or module.Config.Name or charModule.Name)
+    Char:SetAttribute("ModelTag", module.Config.ModelTag or module.Config.SelectionTag or module.Config.Name or charModule.Name)
 
     task.defer(function()
         if not PlayerSprintManager.ManagedPlayers[player] then

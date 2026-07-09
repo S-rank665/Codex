@@ -52,7 +52,8 @@ function AnimationManager:Init()
 			continue
 		end
 
-		self:LoadAnimation(Name, ID, false, Enum.AnimationPriority.Core)
+		local RigAnimationID = self:GetRigAnimationId(Name)
+		self:LoadAnimation(Name, RigAnimationID or ID, false, Enum.AnimationPriority.Core)
 	end
 
 	local function onClimbing(speed: number)
@@ -108,6 +109,21 @@ function AnimationManager:Init()
 	end))
 
 	self:PlayAnimation("Idle")
+end
+
+function AnimationManager:GetRigAnimationId(Name: string): string?
+	local Animations = self.Character and self.Character:FindFirstChild("Animations")
+	local AnimationObject = Animations and Animations:FindFirstChild(Name)
+
+	if AnimationObject and AnimationObject:IsA("Animation") and AnimationObject.AnimationId ~= "" then
+		return AnimationObject.AnimationId
+	end
+
+	if AnimationObject and AnimationObject:IsA("StringValue") and AnimationObject.Value ~= "" then
+		return AnimationObject.Value
+	end
+
+	return nil
 end
 
 function AnimationManager:LoadAnimation(Name: string, ID: string, YieldUntilLoad: boolean?, PriorityOverride: Enum.AnimationPriority?): AnimationTrack

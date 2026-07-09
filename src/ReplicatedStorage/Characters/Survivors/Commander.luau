@@ -174,6 +174,9 @@ end
 local Commander: Types.Survivor = Character.CreateSurvivor({
     Config = {
         Name = "Commander",
+        SelectionTag = "Commander",
+        ModelTag = "Commander",
+        SelectionPoseAnimation = "rbxassetid://180435571",
         Quote = "*pyro noises*",
         Render = "rbxassetid://108440668883002",
 

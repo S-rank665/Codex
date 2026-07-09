@@ -156,6 +156,12 @@ end
 local NullexVoyd: Types.Killer = Character.CreateKiller({
     Config = {
         Name = "Nullex Voyd",
+        SelectionTag = "NullexVoyd",
+        ModelTag = "NullexVoyd",
+        SelectionPoseAnimation = "rbxassetid://124469822398680",
+        SelectionSounds = {
+            "rbxassetid://72568635961241",
+        },
         Quote = "Order was the first lie.",
         Render = "rbxassetid://139883756028491",
         Price = 1308,

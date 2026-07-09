@@ -33,10 +33,134 @@ local RoundManager = {
     StopLoop = false,
     CanSpawnKiller = true, --for debugging purposes
     CanInitLMS = true, --for debugging purposes
+    SelectionTime = 30,
 }
 
 function RoundManager:Init()
     RoundManager.CurrentRound.Killers = {}
+    Network:SetConnection("SubmitCharacterSelection", "REMOTE_FUNCTION", function(player: Player, characterName: string)
+        return RoundManager.Utils.SubmitCharacterSelection(player, characterName)
+    end)
+    TimeManager.OnTimerEnd = function()
+        RoundManager.StartRound()
+    end
+end
+
+function RoundManager.Utils.GetRoleForPlayer(Player: Player): "Killer" | "Survivor"
+    return RoundManager.CurrentRound.KillerIndex[Player] and "Killer" or "Survivor"
+end
+
+function RoundManager.Utils.GetCharacterModuleData(charType: "Killer" | "Survivor", characterName: string)
+    local ModuleScript = Utils.Instance.GetCharacterModule(charType, characterName, nil, false)
+    if not ModuleScript then
+        return nil
+    end
+
+    return Utils.Type.CopyTable(require(ModuleScript))
+end
+
+function RoundManager.Utils.GetCharacterSelectionTag(charType: "Killer" | "Survivor", characterName: string): string?
+    local Module = RoundManager.Utils.GetCharacterModuleData(charType, characterName)
+    return Module and (Module.Config.SelectionTag or Module.Config.Name or characterName)
+end
+
+function RoundManager.Utils.IsSelectionTagAvailable(Player: Player, charType: "Killer" | "Survivor", characterName: string): (boolean, string?)
+    local SelectionTag = RoundManager.Utils.GetCharacterSelectionTag(charType, characterName)
+    if not SelectionTag then
+        return false, "Character module was not found."
+    end
+
+    for OtherPlayer: Player, Selection in RoundManager.CurrentRound.CharacterSelections do
+        if OtherPlayer == Player or Selection.Role ~= charType then
+            continue
+        end
+
+        if Selection.SelectionTag == SelectionTag then
+            return false, "Another player already selected a character with tag "..SelectionTag.."."
+        end
+    end
+
+    return true
+end
+
+function RoundManager.Utils.SubmitCharacterSelection(Player: Player, characterName: string): (boolean, string?)
+    if RoundState.Value ~= "CharacterSelection" or not RoundManager.CurrentRound.CharacterSelections then
+        return false, "Character selection is not active."
+    end
+
+    local Role = RoundManager.Utils.GetRoleForPlayer(Player)
+    local Available, Reason = RoundManager.Utils.IsSelectionTagAvailable(Player, Role, characterName)
+    if not Available then
+        return false, Reason
+    end
+
+    local SelectionTag = RoundManager.Utils.GetCharacterSelectionTag(Role, characterName)
+    RoundManager.CurrentRound.CharacterSelections[Player] = {
+        CharacterName = characterName,
+        Role = Role,
+        SelectionTag = SelectionTag,
+        Confirmed = true,
+    }
+
+    Network:FireAllClientConnection("CharacterSelectionUpdated", "REMOTE_EVENT", Player, RoundManager.CurrentRound.CharacterSelections[Player])
+    return true
+end
+
+function RoundManager.Utils.StartCharacterSelection(PlayersOrderedByMalice: {Player}): boolean
+    RoundManager.CurrentRound.CharacterSelections = {}
+    RoundState.Value = "CharacterSelection"
+    TimeManager.SetTime(RoundManager.SelectionTime)
+    TimeManager.CanDecreaseTime = true
+
+    for index, Player: Player in PlayersOrderedByMalice do
+        local Role = if index <= workspace:GetAttribute("KillersAllowed") then "Killer" else "Survivor"
+        local FavoriteCharacter = Utils.PlayerData.GetPlayerEquipped(Player, Role)
+        local SelectionTag = RoundManager.Utils.GetCharacterSelectionTag(Role, FavoriteCharacter)
+
+        if SelectionTag and RoundManager.Utils.IsSelectionTagAvailable(Player, Role, FavoriteCharacter) then
+            RoundManager.CurrentRound.CharacterSelections[Player] = {
+                CharacterName = FavoriteCharacter,
+                Role = Role,
+                SelectionTag = SelectionTag,
+                Confirmed = false,
+            }
+        end
+    end
+
+    Network:FireAllClientConnection("CharacterSelectionStarted", "REMOTE_EVENT", {
+        Duration = RoundManager.SelectionTime,
+        MapName = workspace:FindFirstChild("Map") and workspace.Map:GetAttribute("Name") or "Unknown Map",
+        Selections = RoundManager.CurrentRound.CharacterSelections,
+    })
+
+    task.wait(RoundManager.SelectionTime)
+
+    for _, Killer in RoundManager.CurrentRound.Killers do
+        local Selection = Killer.Player and RoundManager.CurrentRound.CharacterSelections[Killer.Player]
+        if not Selection or not Selection.CharacterName then
+            return false
+        end
+    end
+
+    return true
+end
+
+function RoundManager.Utils.CancelCharacterSelection(PlayersOrderedByMalice: {Player})
+    for _, Killer in RoundManager.CurrentRound.Killers do
+        if Killer.Player then
+            Utils.PlayerData.GetPlayerStat(Killer.Player, "General.Malice", false).Value = 0
+        end
+    end
+
+    for _, Player: Player in PlayersOrderedByMalice do
+        CommonFunctions.UpdatePlayerStat(Player, "General.Malice", 1)
+        ServerCharacterManager.SetupCharacter(Player)
+    end
+
+    MapManager.DestroyCurrentMap()
+    RoundManager.CurrentRound.CharacterSelections = {}
+    RoundState.Value = "Lobby"
+    TimeManager.SetTime(TimeManager.Config.LobbyTime)
     TimeManager.OnTimerEnd = function()
         RoundManager.StartRound()
     end
@@ -67,6 +191,11 @@ function RoundManager.StartRound()
             Character = nil
         }
         RoundManager.CurrentRound.KillerIndex[PlayersOrderedByMalice[killerIndex]] = killerIndex
+    end
+
+    if not RoundManager.Utils.StartCharacterSelection(PlayersOrderedByMalice) then
+        RoundManager.Utils.CancelCharacterSelection(PlayersOrderedByMalice)
+        return
     end
 
     --sets up every player
@@ -322,7 +451,8 @@ function RoundManager.Utils.SetupPlayer(Player: Player, KillerIndex: number)
     if KillerIndex and RoundManager.CanSpawnKiller then --RoundManager.CanSpawnKiller is for debugging
         Utils.PlayerData.GetPlayerStat(Player, "General.Malice", false).Value = 1 --resets malice
 
-        local EquippedKillerName = Utils.PlayerData.GetPlayerEquipped(Player, "Killer")
+        local Selection = RoundManager.CurrentRound.CharacterSelections and RoundManager.CurrentRound.CharacterSelections[Player]
+        local EquippedKillerName = Selection and Selection.CharacterName or Utils.PlayerData.GetPlayerEquipped(Player, "Killer")
 
         --spawns the character
         Char = ServerCharacterManager.SetupCharacter(Player,
@@ -347,7 +477,8 @@ function RoundManager.Utils.SetupPlayer(Player: Player, KillerIndex: number)
     else
         CommonFunctions.UpdatePlayerStat(Player, "General.Malice", 1) --adds 1 malice
 
-        local EquippedSurvivorName = Utils.PlayerData.GetPlayerEquipped(Player, "Survivor")
+        local Selection = RoundManager.CurrentRound.CharacterSelections and RoundManager.CurrentRound.CharacterSelections[Player]
+        local EquippedSurvivorName = Selection and Selection.CharacterName or Utils.PlayerData.GetPlayerEquipped(Player, "Survivor")
 
         --spawns the character
         Char = ServerCharacterManager.SetupCharacter(Player,
