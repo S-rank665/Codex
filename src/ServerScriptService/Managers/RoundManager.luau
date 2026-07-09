@@ -9,6 +9,7 @@ local Network = require(ReplicatedStorage.Modules.Network)
 local Sounds = require(ReplicatedStorage.Modules.Sounds)
 local TimeManager = require(ServerScriptService.Managers.TimeManager)
 local CommonFunctions = require(ServerScriptService.System.CommonFunctions)
+local DownedManager = require(ServerScriptService.Managers.PlayerManager.DownedManager)
 
 local RoundState: StringValue = ReplicatedStorage.RoundInfo.CurrentState
 local PlayersRemaining: Folder = ReplicatedStorage.RoundInfo.PlayersRemaining
@@ -424,8 +425,14 @@ function RoundManager.Utils.CheckForKillerWin()
         if #Count.Killer <= 0 then
             RoundManager.Callables.EndRound("Survivors")
         -- lms
+        elseif Survivors > 0 and DownedManager.AreAllSurvivorsDowned() then
+            DownedManager.KillAllDownedSurvivors()
+            RoundManager.Callables.EndRound("Killer")
         elseif Survivors == 1 then
-            RoundManager.Callables.InitLMS(Players:GetPlayerFromCharacter(Count.Survivor[1]))
+            local LastSurvivor = Count.Survivor[1]
+            if LastSurvivor:GetAttribute("Downed") ~= true then
+                RoundManager.Callables.InitLMS(Players:GetPlayerFromCharacter(LastSurvivor))
+            end
         -- if every surv is dead
         elseif #RoundManager.CurrentRound.PlayersAccepted > 1 and Survivors <= 0 then
             RoundManager.Callables.EndRound("Killer")

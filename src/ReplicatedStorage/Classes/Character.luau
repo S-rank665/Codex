@@ -66,8 +66,14 @@ function CharTypes.GetDefaultSurvivorSettings(): Types.Survivor
             SprintSpeedMultiplier = 26 / 10.5,
             StaminaProperties = {
                 MaxStamina = 100,
-                StaminaDrain = 10,
-                StaminaGain = 20,
+                StaminaDrain = 0,
+                StaminaGain = 0,
+            },
+            ResourceProperties = {
+                ResourceName = "",
+                Resource = 0,
+                MaxResource = 0,
+                ResourceVisible = false,
             },
 
             Abilities = {},
@@ -152,9 +158,15 @@ function CharTypes.GetDefaultKillerSettings(): Types.Killer
 			UseJumpPower = true,
             SprintSpeedMultiplier = 26 / 10.5,
             StaminaProperties = {
-                MaxStamina = 110,
-                StaminaDrain = 10.5,
-                StaminaGain = 21,
+                MaxStamina = 100,
+                StaminaDrain = 0,
+                StaminaGain = 0,
+            },
+            ResourceProperties = {
+                ResourceName = "",
+                Resource = 0,
+                MaxResource = 0,
+                ResourceVisible = false,
             },
 
             Abilities = {},

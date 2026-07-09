@@ -365,6 +365,13 @@ export type Survivor = {
             --- How fast the stamina gets regained.
             StaminaGain: number,
         },
+        --- Optional per-character resource bar used by abilities.
+        ResourceProperties: {
+            ResourceName: string,
+            Resource: number,
+            MaxResource: number,
+            ResourceVisible: boolean,
+        }?,
 
         --- All of the initialized abilities the character has.
         Abilities: {[string]: Ability},
@@ -725,6 +732,13 @@ export type Killer = {
             --- How fast the stamina gets regained.
             StaminaGain: number,
         },
+        --- Optional per-character resource bar used by abilities.
+        ResourceProperties: {
+            ResourceName: string,
+            Resource: number,
+            MaxResource: number,
+            ResourceVisible: boolean,
+        }?,
 
         --- All of the initialized abilities the character has, counting the slash.
         Abilities: {[string]: Ability},

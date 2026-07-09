@@ -35,6 +35,7 @@ local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlayerSpeedManager = require(ServerScriptService.Managers.PlayerManager.PlayerSpeedManager)
+local DownedManager = require(ServerScriptService.Managers.PlayerManager.DownedManager)
 local Achievements = require(ReplicatedStorage.Assets.Achievements)
 local Types = require(ReplicatedStorage.Classes.Types)
 local Utils = require(ReplicatedStorage.Modules.Utils)
@@ -136,6 +137,17 @@ function CommonFunctions.DamagePlayer(DamageSettings: DamagePlayerSettings)
 	end
 	
 	DamageSettings.Reason = DamageSettings.Reason or "HAHAHA" --OnlyIvo
+
+	if TargetPlayer and Role and Role.Value == "Survivor" and DamageSettings.Damage > 0 then
+		if Char:GetAttribute("Downed") == true then
+			DownedManager.Kill(TargetPlayer)
+			return
+		end
+
+		if DamageSettings.TargetHumanoid.Health - DamageSettings.Damage <= 0 and DownedManager.Down(TargetPlayer, DamageSettings.TargetHumanoid) then
+			return
+		end
+	end
 
 	DamageSettings.TargetHumanoid:TakeDamage(DamageSettings.Damage)
 

@@ -129,6 +129,12 @@ function ServerCharacterManager._InitCharacter(player: Player, Char: Model, char
     local Humanoid = Char:FindFirstChildWhichIsA("Humanoid")
     Humanoid.MaxHealth = module.GameplayConfig.Health
     Humanoid.Health = module.GameplayConfig.Health
+    Char:SetAttribute("OriginalMaxHealth", module.GameplayConfig.Health)
+    Char:SetAttribute("Downed", false)
+    Char:SetAttribute("DownedLivesUsed", false)
+    Char:SetAttribute("CanRevive", true)
+    Char:SetAttribute("DownedHealth", 0)
+    Char:SetAttribute("DownedMaxHealth", 300)
     Humanoid.UseJumpPower = if module.GameplayConfig.UseJumpPower ~= nil then module.GameplayConfig.UseJumpPower else true
     Humanoid.JumpPower = module.GameplayConfig.JumpPower or 50
     Humanoid.JumpHeight = module.GameplayConfig.JumpHeight or 7.2
@@ -154,6 +160,15 @@ function ServerCharacterManager._InitCharacter(player: Player, Char: Model, char
     Utils.Misc.PreloadAssets(module.Config)
 
     for name, value in module.GameplayConfig.StaminaProperties do
+        local Property = Char.PlayerAttributes:FindFirstChild(name)
+        if not Property then
+            continue
+        end
+
+        Property.Value = value
+    end
+
+    for name, value in module.GameplayConfig.ResourceProperties or {} do
         local Property = Char.PlayerAttributes:FindFirstChild(name)
         if not Property then
             continue
