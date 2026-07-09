@@ -1,0 +1,12 @@
+{
+  "name": "PlanetaryApathyProtocol",
+  "tree": {
+    "$className": "DataModel",
+    "Workspace": {"$className": "Workspace", "$path": "src/Workspace"},
+    "ReplicatedStorage": {"$className": "ReplicatedStorage", "$path": "src/ReplicatedStorage"},
+    "ServerScriptService": {"$className": "ServerScriptService", "$path": "src/ServerScriptService"},
+    "SoundService": {"$className": "SoundService", "$path": "src/SoundService"},
+    "StarterPlayer": {"$className": "StarterPlayer", "StarterPlayerScripts": {"$className": "StarterPlayerScripts", "$path": "src/StarterPlayer/StarterPlayerScripts"}},
+    "StarterGui": {"$className": "StarterGui", "$path": "src/StarterGui"}
+  }
+}
