@@ -54,6 +54,7 @@ function SmoothShiftLock.new()
 	
 	self.isEnabled = false
 	self.isMouseLocked = false
+	self.cameraFacingEnabled = false
 	self.mouseLockToggledEvent = Instance.new("BindableEvent")
 	
 	--// Check for client setting changes
@@ -165,28 +166,49 @@ function SmoothShiftLock:ToggleShiftLock(Toggle: boolean)
 		if (self.isMouseLocked) and self.Character then
 			self._runtimeMaid:GiveTask(RunService.RenderStepped:Connect(function(Delta: number)
 				if not self.Humanoid or not self.HumanoidRootPart then return end
-				self.Humanoid.AutoRotate = not self.isMouseLocked
-				--// Rotate character
+				self.Humanoid.AutoRotate = not self.cameraFacingEnabled
+				if not self.cameraFacingEnabled then return end
+				--// Rotate character only when a character ability explicitly enables it.
 				if self.Humanoid.Sit then return end
-				if (Config.CHARACTER_SMOOTH_ROTATION) then
-					local _, y, _ = Camera.CFrame:ToOrientation()
-					self.HumanoidRootPart.CFrame = self.HumanoidRootPart.CFrame:Lerp(CFrame.new(self.HumanoidRootPart.Position) * CFrame.Angles(0, y, 0), Delta * 5 * Config.CHARACTER_ROTATION_SPEED)
-				else
-					local _, y, _ = Camera.CFrame:ToOrientation()
-					self.HumanoidRootPart.CFrame = CFrame.new(self.HumanoidRootPart.Position) * CFrame.Angles(0, y, 0)
-				end
+				self:FaceCamera(Delta)
 			end))
 		end
 	else
 		self._runtimeMaid:Destroy()
 		if self.Humanoid then
-			self.Humanoid.AutoRotate = not self.isMouseLocked
+			self.Humanoid.AutoRotate = true
 		end
 		
 		CameraUtils.restoreMouseIcon()
 	end
 	
 	self.mouseLockToggledEvent:Fire()
+end
+
+function SmoothShiftLock:SetCameraFacingEnabled(Enabled: boolean)
+	self.cameraFacingEnabled = Enabled
+
+	if self.Humanoid then
+		self.Humanoid.AutoRotate = not Enabled
+	end
+end
+
+function SmoothShiftLock:GetCameraFacingEnabled(): boolean
+	return self.cameraFacingEnabled
+end
+
+function SmoothShiftLock:FaceCamera(Delta: number?)
+	if not self.HumanoidRootPart then
+		return
+	end
+
+	local _, y, _ = Camera.CFrame:ToOrientation()
+	local TargetCFrame = CFrame.new(self.HumanoidRootPart.Position) * CFrame.Angles(0, y, 0)
+	if Delta and Config.CHARACTER_SMOOTH_ROTATION then
+		self.HumanoidRootPart.CFrame = self.HumanoidRootPart.CFrame:Lerp(TargetCFrame, Delta * 5 * Config.CHARACTER_ROTATION_SPEED)
+	else
+		self.HumanoidRootPart.CFrame = TargetCFrame
+	end
 end
 
 function SmoothShiftLock:GetIsMouseLocked()

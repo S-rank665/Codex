@@ -35,6 +35,14 @@ function CharTypes.GetDefaultSurvivorSettings(): Types.Survivor
             Price = 0,
             Render = "",
 
+            -- Fanon Outcome selection metadata. SelectionTag blocks duplicates during
+            -- the pre-round character select; ModelTag groups rigs/skins shared by
+            -- multiple gameplay variants.
+            SelectionTag = "Survivor",
+            ModelTag = "Survivor",
+            SelectionPoseAnimation = "",
+            SelectionSounds = {},
+
             AnimationIDs = {
                 IdleAnimation = "rbxassetid://128254839975087",
                 WalkAnimation = "rbxassetid://95139037304316",
@@ -52,11 +60,20 @@ function CharTypes.GetDefaultSurvivorSettings(): Types.Survivor
             Health = 100,
             HitboxPriority = 1,
 			BaseSpeed = 10.5,
+			JumpPower = 50,
+			JumpHeight = 7.2,
+			UseJumpPower = true,
             SprintSpeedMultiplier = 26 / 10.5,
             StaminaProperties = {
                 MaxStamina = 100,
-                StaminaDrain = 10,
-                StaminaGain = 20,
+                StaminaDrain = 0,
+                StaminaGain = 0,
+            },
+            ResourceProperties = {
+                ResourceName = "",
+                Resource = 0,
+                MaxResource = 0,
+                ResourceVisible = false,
             },
 
             Abilities = {},
@@ -101,6 +118,14 @@ function CharTypes.GetDefaultKillerSettings(): Types.Killer
             Price = 0,
             Render = "",
 
+            -- Fanon Outcome selection metadata. SelectionTag blocks duplicates during
+            -- the pre-round character select; ModelTag groups rigs/skins shared by
+            -- multiple gameplay variants.
+            SelectionTag = "Killer",
+            ModelTag = "Killer",
+            SelectionPoseAnimation = "",
+            SelectionSounds = {},
+
             LastManStandingTheme = "rbxassetid://125799740823318",
             SpecialLastManStandings = {},
 
@@ -128,11 +153,20 @@ function CharTypes.GetDefaultKillerSettings(): Types.Killer
 			Health = 1200,
 			HitboxPriority = 1,
 			BaseSpeed = 10.5,
+			JumpPower = 50,
+			JumpHeight = 7.2,
+			UseJumpPower = true,
             SprintSpeedMultiplier = 26 / 10.5,
             StaminaProperties = {
-                MaxStamina = 110,
-                StaminaDrain = 10.5,
-                StaminaGain = 21,
+                MaxStamina = 100,
+                StaminaDrain = 0,
+                StaminaGain = 0,
+            },
+            ResourceProperties = {
+                ResourceName = "",
+                Resource = 0,
+                MaxResource = 0,
+                ResourceVisible = false,
             },
 
             Abilities = {},

@@ -57,43 +57,9 @@ function PlayerSprintManager:Init()
                         task.cancel(ManagedPlayer.RecoveryThread)
                     end
 
-                    --killer's stamina should only deplete when other survivors are close
-                    --using `playersFolder` is fine since spectators will be around 1000 studs away in the lobby
-                    if Role.Value == "Killer" then
-                        local found = false
-                        for _, otherChar in workspace.Players:GetChildren() do
-                            if otherChar == Character then
-                                continue
-                            end
-
-                            local charHRP = Utils.Character.GetRootPart(otherChar)
-                            if not charHRP then
-                                continue
-                            end
-
-                            local Role = otherChar:FindFirstChild("Role")
-                            if not Role or Role.Value ~= "Survivor" then
-                                continue
-                            end
-
-                            if (charHRP.Position - HumanoidRootPart.Position).Magnitude <= 110 then
-                                found = true
-                                break
-                            end
-                        end
-                        
-                        if found then
-                            ManagedPlayer:_DrainStamina(delta)
-                        elseif ManagedPlayer.CanGainStamina then
-                            ManagedPlayer:_GainStaminaLegally(delta)
-                        end
-                    else
-                        ManagedPlayer:_DrainStamina(delta)
-                    end
-
-                    if ManagedPlayer.Stamina <= 0 then
-                        ManagedPlayer:_Stop(true)
-                    end
+                    -- Fanon Outcome: sprint no longer consumes stamina.
+                    -- Character-specific resources use CustomResource values instead.
+                    ManagedPlayer.Stamina = ManagedPlayer.MaxStamina.Value
 
                 else
 
@@ -102,9 +68,7 @@ function PlayerSprintManager:Init()
                         ManagedPlayer.SpeedApplied = false
                     end
 
-                    if ManagedPlayer.CanGainStamina then
-                        ManagedPlayer:_GainStaminaLegally(delta)
-                    end
+                    ManagedPlayer.Stamina = ManagedPlayer.MaxStamina.Value
 
                 end
 
@@ -131,7 +95,7 @@ function PlayerSprintManager:Init()
                 end
 
                 ManagedPlayer.AttemptingSprint = Pressed
-                ManagedPlayer.PressingSprintWhileRecovering = ManagedPlayer.Exhausted and Pressed
+                ManagedPlayer.PressingSprintWhileRecovering = false
             end))
 
             CharacterJanitor:Add(function()

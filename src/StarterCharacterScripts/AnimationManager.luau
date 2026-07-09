@@ -52,7 +52,22 @@ function AnimationManager:Init()
 			continue
 		end
 
-		self:LoadAnimation(Name, ID, false, Enum.AnimationPriority.Core)
+		local RigAnimationID = self:GetRigAnimationId(Name)
+		self:LoadAnimation(Name, RigAnimationID or ID, false, Enum.AnimationPriority.Core)
+	end
+
+	local RigAnimations = self.Character:FindFirstChild("Animations")
+	if RigAnimations then
+		for _, RigAnimation in RigAnimations:GetChildren() do
+			if self.AnimationTracks[RigAnimation.Name] or DefaultAnimations[RigAnimation.Name] then
+				continue
+			end
+
+			local RigAnimationID = self:GetRigAnimationId(RigAnimation.Name)
+			if RigAnimationID then
+				self:LoadAnimation(RigAnimation.Name, RigAnimationID, false, Enum.AnimationPriority.Core)
+			end
+		end
 	end
 
 	local function onClimbing(speed: number)
@@ -71,7 +86,9 @@ function AnimationManager:Init()
 	local function onRunning(speed: number?)
 		Speed = (speed ~= nil and typeof(speed) == "number") and speed or Speed
 		
-		if Speed > 0.01 then
+		if self.Character:GetAttribute("Downed") == true then
+			self:PlayAnimation(if Speed > 0.01 and self.AnimationTracks.DownedCrawl then "DownedCrawl" else "DownedIdle")
+		elseif Speed > 0.01 then
 			self:PlayAnimation(if (self.AnimationTracks.Sprint and Sprinting.Value) then "Sprint" else "Walk")
 		else
 			self:PlayAnimation("Idle")
@@ -92,6 +109,7 @@ function AnimationManager:Init()
 	self.Janitor:Add(Humanoid.Running:Connect(onRunning))
 	self.Janitor:Add(Humanoid.Seated:Connect(onSeated))
 	self.Janitor:Add(Sprinting.Changed:Connect(onRunning))
+	self.Janitor:Add(self.Character:GetAttributeChangedSignal("Downed"):Connect(onRunning))
 
 	self.Janitor:Add(RunService.PreAnimation:Connect(function()
 		if (self.AnimationTracks.Walk and self.AnimationTracks.Walk.IsPlaying) or (self.AnimationTracks.Sprint and self.AnimationTracks.Sprint.IsPlaying) then
@@ -108,6 +126,21 @@ function AnimationManager:Init()
 	end))
 
 	self:PlayAnimation("Idle")
+end
+
+function AnimationManager:GetRigAnimationId(Name: string): string?
+	local Animations = self.Character and self.Character:FindFirstChild("Animations")
+	local AnimationObject = Animations and Animations:FindFirstChild(Name)
+
+	if AnimationObject and AnimationObject:IsA("Animation") and AnimationObject.AnimationId ~= "" then
+		return AnimationObject.AnimationId
+	end
+
+	if AnimationObject and AnimationObject:IsA("StringValue") and AnimationObject.Value ~= "" then
+		return AnimationObject.Value
+	end
+
+	return nil
 end
 
 function AnimationManager:LoadAnimation(Name: string, ID: string, YieldUntilLoad: boolean?, PriorityOverride: Enum.AnimationPriority?): AnimationTrack

@@ -37,14 +37,42 @@
             "className": "NumberValue",
             "name": "StaminaDrain",
             "properties": {
-                "Value": 10
+                "Value": 0
             }
         },
         {
             "className": "NumberValue",
             "name": "StaminaGain",
             "properties": {
-                "Value": 30
+                "Value": 0
+            }
+        },
+        {
+            "className": "StringValue",
+            "name": "ResourceName",
+            "properties": {
+                "Value": ""
+            }
+        },
+        {
+            "className": "NumberValue",
+            "name": "Resource",
+            "properties": {
+                "Value": 0
+            }
+        },
+        {
+            "className": "NumberValue",
+            "name": "MaxResource",
+            "properties": {
+                "Value": 0
+            }
+        },
+        {
+            "className": "BoolValue",
+            "name": "ResourceVisible",
+            "properties": {
+                "Value": false
             }
         }
     ]

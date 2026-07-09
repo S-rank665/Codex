@@ -1,0 +1,185 @@
+{
+    "className": "Model",
+    "children": [
+        {
+            "className": "Humanoid",
+            "name": "Humanoid",
+            "properties": {
+                "RigType": "R6"
+            },
+            "children": [
+                {
+                    "className": "Animator",
+                    "name": "Animator"
+                }
+            ]
+        },
+        {
+            "className": "Part",
+            "name": "HumanoidRootPart",
+            "properties": {
+                "Size": [
+                    2,
+                    2,
+                    1
+                ],
+                "Anchored": false,
+                "CanCollide": false,
+                "Transparency": 0.5
+            }
+        },
+        {
+            "className": "Part",
+            "name": "Head",
+            "properties": {
+                "Size": [
+                    2,
+                    1,
+                    1
+                ],
+                "Anchored": false,
+                "CanCollide": false,
+                "Transparency": 0.5
+            }
+        },
+        {
+            "className": "Part",
+            "name": "Torso",
+            "properties": {
+                "Size": [
+                    2,
+                    2,
+                    1
+                ],
+                "Anchored": false,
+                "CanCollide": false,
+                "Transparency": 0.5
+            }
+        },
+        {
+            "className": "Part",
+            "name": "Left Arm",
+            "properties": {
+                "Size": [
+                    1,
+                    2,
+                    1
+                ],
+                "Anchored": false,
+                "CanCollide": false,
+                "Transparency": 0.5
+            }
+        },
+        {
+            "className": "Part",
+            "name": "Right Arm",
+            "properties": {
+                "Size": [
+                    1,
+                    2,
+                    1
+                ],
+                "Anchored": false,
+                "CanCollide": false,
+                "Transparency": 0.5
+            }
+        },
+        {
+            "className": "Part",
+            "name": "Left Leg",
+            "properties": {
+                "Size": [
+                    1,
+                    2,
+                    1
+                ],
+                "Anchored": false,
+                "CanCollide": false,
+                "Transparency": 0.5
+            }
+        },
+        {
+            "className": "Part",
+            "name": "Right Leg",
+            "properties": {
+                "Size": [
+                    1,
+                    2,
+                    1
+                ],
+                "Anchored": false,
+                "CanCollide": false,
+                "Transparency": 0.5
+            }
+        },
+        {
+            "className": "Folder",
+            "name": "Animations",
+            "children": [
+                {
+                    "className": "Animation",
+                    "name": "Idle",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "Walk",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "Run",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "Sprint",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "Jump",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "Fall",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "DownedIdle",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "DownedCrawl",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                },
+                {
+                    "className": "Animation",
+                    "name": "SelectionPose",
+                    "properties": {
+                        "AnimationId": ""
+                    }
+                }
+            ]
+        }
+    ]
+}
